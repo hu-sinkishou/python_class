@@ -72,6 +72,15 @@
             width: 15%;
             white-space: nowrap;
         }
+        /* リンクのスタイル調整 */
+        .schedule th a {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+        .schedule th a:hover {
+            color: var(--secondary);
+        }
+
         .schedule tr:nth-child(even) {
             background-color: #fcfcfc;
         }
@@ -154,9 +163,8 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- 基礎編 -->
                 <tr>
-                    <th>第1回</th>
+                    <th><a href="https://hu-sinkishou.github.io/python_class/index/Session1_Pythonをはじめよう.html">第1回</a></th>
                     <td>
                         <span class="phase-label phase-basic">基礎編</span>
                         <span class="topic-title">Pythonをはじめよう</span>
@@ -169,7 +177,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>第2回</th>
+                    <th><a href="https://hu-sinkishou.github.io/python_class/index/Session2_プログラムの制御.html">第2回</a></th>
                     <td>
                         <span class="phase-label phase-basic">基礎編</span>
                         <span class="topic-title">プログラムの制御</span>
@@ -182,7 +190,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>第3回</th>
+                    <th><a href="https://hu-sinkishou.github.io/python_class/index/Session3_データをまとめて扱う.html">第3回</a></th>
                     <td>
                         <span class="phase-label phase-basic">基礎編</span>
                         <span class="topic-title">データをまとめて扱う</span>
@@ -195,7 +203,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>第4回</th>
+                    <th><a href="https://hu-sinkishou.github.io/python_class/index/Session4_部品化と再利用.html">第4回</a></th>
                     <td>
                         <span class="phase-label phase-basic">基礎編</span>
                         <span class="topic-title">部品化と再利用</span>
@@ -207,9 +215,8 @@
                         </div>
                     </td>
                 </tr>
-                <!-- 応用編 -->
                 <tr>
-                    <th>第5回</th>
+                    <th><a href="https://hu-sinkishou.github.io/python_class/index/Session5_データ分析入門.html">第5回</a></th>
                     <td>
                         <span class="phase-label phase-app">応用編</span>
                         <span class="topic-title">データ分析入門 (Pandas)</span>
@@ -218,11 +225,12 @@
                             ・CSVファイルの読み込み (read_csv)<br>
                             ・データの抽出 (Filtering) と集計 (GroupBy)<br>
                             ・演習：売上データの分析
+                            <small>▶ <a href="https://hu-sinkishou.github.io/python_class/csv_/sales_data.csv" download>演習用CSV (sales_data.csv) のダウンロード</a></small>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <th>第6回</th>
+                    <th><a href="https://hu-sinkishou.github.io/python_class/index/Session6_GUIアプリ開発基礎.html">第6回</a></th>
                     <td>
                         <span class="phase-label phase-app">応用編</span>
                         <span class="topic-title">GUIアプリ開発基礎 (Tkinter)</span>
@@ -235,7 +243,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>第7回</th>
+                    <th><a href="https://hu-sinkishou.github.io/python_class/index/Session7_対話的なアプリ開発.html">第7回</a></th>
                     <td>
                         <span class="phase-label phase-app">応用編</span>
                         <span class="topic-title">対話的なアプリ開発</span>
@@ -248,7 +256,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>第8回</th>
+                    <th><a href="https://hu-sinkishou.github.io/python_class/index/Session8_最終課題.html">第8回</a></th>
                     <td>
                         <span class="phase-label phase-app">応用編</span>
                         <span class="topic-title">最終課題</span>
@@ -256,6 +264,7 @@
                             ・売上データ分析アプリケーションの開発<br>
                             ・CSV読み込み、集計、グラフ表示の統合<br>
                             ・成果発表とコードレビュー
+                            <small>▶ <a href="https://hu-sinkishou.github.io/python_class/csv_/dummy_data.csv" download>課題用CSV (dummy_data.csv) のダウンロード</a></small>
                         </div>
                     </td>
                 </tr>
@@ -270,6 +279,7 @@
             <li><strong>第1回〜第5回：</strong> Google Colaboratory（ブラウザのみで学習可能）</li>
             <li><strong>第6回〜第8回：</strong> ローカル環境（VS Code + Pythonインストール必須）<br>
             <small>※Tkinterを使用したGUI開発を行うため、後半は自身のPC環境で実行する必要があります。</small></li>
+            <li><strong>サポート：</strong> <a href="https://hu-sinkishou.github.io/python_class/index/Session0_環境構築.html" target="_blank">環境構築ガイドサイトはこちら</a></li>
         </ul>
     </section>
 
