@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第6回：GUIアプリ開発基礎 | 情報系基礎演習</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark-reasonable.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>
+        /* 共通スタイル */
+        :root { --primary: #306998; --secondary: #FFD43B; --accent: #E05D44; --text: #333; --bg: #F4F6F9; --white: #ffffff; --code-bg: #282c34; }
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.8; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: var(--white); padding: 60px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        header { text-align: center; margin-bottom: 50px; border-bottom: 3px solid var(--secondary); padding-bottom: 20px; }
+        .tag { background: var(--primary); color: var(--white); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-bottom: 10px; }
+        h1 { font-size: 2.5rem; color: var(--primary); margin: 10px 0; }
+        .subtitle { color: #666; font-size: 1.1rem; }
+        section { margin-bottom: 80px; }
+        h2 { font-size: 1.8rem; border-left: 8px solid var(--secondary); padding-left: 15px; margin-bottom: 25px; color: #2c3e50; background: linear-gradient(to right, #fffaf0, transparent); padding-top: 5px; padding-bottom: 5px; }
+        h3 { font-size: 1.4rem; margin-top: 40px; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #444; display: flex; align-items: center; gap: 10px; }
+        p { margin-bottom: 1.5rem; }
+        pre { background: var(--code-bg); border-radius: 8px; padding: 20px; overflow-x: auto; font-family: 'Roboto Mono', monospace; position: relative; margin: 20px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        pre::before { content: "Python"; position: absolute; top: 0; right: 0; background: #444; color: #ccc; font-size: 0.8rem; padding: 3px 10px; border-radius: 0 8px 0 8px; }
+        code { font-size: 1rem; }
+        .box { padding: 25px; border-radius: 8px; margin: 30px 0; }
+        .box-point { background: #e8f4fd; border-left: 5px solid var(--primary); }
+        .box-point h4 { color: var(--primary); margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px; font-size: 1.2rem; }
+        .box-warn { background: #fff5f5; border-left: 5px solid var(--accent); }
+        .box-warn h4 { color: var(--accent); margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px; font-size: 1.2rem; }
+        .box-exercise { background: #fff9db; border: 2px dashed var(--secondary); }
+        .box-exercise h4 { color: #e67700; margin: 0 0 15px 0; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f8f9fa; color: var(--primary); width: 30%; }
+        footer { text-align: center; margin-top: 80px; font-size: 0.9rem; color: #888; border-top: 1px solid #eee; padding-top: 30px; }
+        .toggle-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s; font-size: 1rem; }
+        .toggle-btn:hover { background: #204d74; }
+        details[open] summary ~ * { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Window Mockup */
+        .window-mockup { background: #e0e0e0; border: 1px solid #999; border-radius: 5px; padding: 20px; width: 300px; margin: 20px auto; box-shadow: 5px 5px 10px rgba(0,0,0,0.2); }
+        .window-title { background: #306998; color: white; padding: 5px 10px; border-radius: 3px 3px 0 0; font-size: 0.8rem; margin: -20px -20px 10px -20px; }
+        .mock-btn { background: #ddd; border: 1px solid #999; padding: 5px 15px; margin: 5px; display: inline-block; cursor: pointer; }
+        .mock-label { margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <span class="tag">第6回</span>
+        <h1>GUIアプリ開発基礎</h1>
+        <p class="subtitle">Tkinterでデスクトップアプリを作る</p>
+    </header>
+
+    <section>
+        <h2>0. はじめに：CUIからGUIへ</h2>
+        <p>これまでは、黒い画面に文字が出るだけの「CUI (Character User Interface)」でした。<br>
+        今日からは、皆さんが普段使っているような、ウィンドウ、ボタン、メニューを持つ「GUI (Graphical User Interface)」アプリを作ります。</p>
+        <div class="box box-warn">
+            <h4><i class="fas fa-desktop"></i> 環境について</h4>
+            <p>GUIアプリは画面を描画するため、Google Colab（サーバー）では動作しません。<br>
+            ここからは<strong>皆さんのPC（ローカル環境）</strong>にインストールされたPython（VS Codeなど）で実行してください。</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>1. Tkinterをはじめよう</h2>
+        <h3><i class="fas fa-window-maximize"></i> 最小構成のウィンドウ</h3>
+        <p>Pythonには標準で <strong>Tkinter（ティーキンター）</strong> というGUIライブラリが入っています。<br>
+        まずは空っぽのウィンドウを表示してみましょう。</p>
+
+        <pre><code>import tkinter as tk
+
+# 1. 土台（メインウィンドウ）を作る
+root = tk.Tk()
+root.title("初めてのアプリ")
+root.geometry("400x300")  # 幅x高さ
+
+# 2. アプリを起動する（待機状態にする）
+root.mainloop()</code></pre>
+        
+        <div class="box box-point">
+            <h4><i class="fas fa-info-circle"></i> mainloopとは？</h4>
+            <p>GUIアプリは、「ユーザーがボタンを押すまで待つ」必要があります。<br>
+            <code>mainloop()</code> は「ウィンドウが閉じられるまで、プログラムを終了せずに待機し続けろ」という命令です。<br>
+            これを書かないと、ウィンドウが一瞬で消えてしまいます。</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>2. ウィジェット（部品）の基本</h2>
+        <h3><i class="fas fa-th-large"></i> 部品を作る→置く</h3>
+        <p>画面上のパーツを「ウィジェット」と呼びます。ウィジェットは「作って」から「配置する」の2ステップで表示されます。</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ウィジェット名</th>
+                    <th>役割</th>
+                    <th>コード例</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Label</strong></td>
+                    <td>文字や画像を表示する</td>
+                    <td><code>tk.Label(root, text="...")</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Button</strong></td>
+                    <td>押せるボタン</td>
+                    <td><code>tk.Button(root, text="...")</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Entry</strong></td>
+                    <td>1行の入力欄</td>
+                    <td><code>tk.Entry(root)</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <pre><code>import tkinter as tk
+root = tk.Tk()
+root.geometry("300x200")
+
+# 1. 部品を作る (Master=親ウィンドウ を指定)
+lbl = tk.Label(root, text="こんにちは！", font=("Helvetica", 20))
+btn = tk.Button(root, text="閉じる")
+
+# 2. 部品を配置する (pack)
+lbl.pack()
+btn.pack()
+
+root.mainloop()</code></pre>
+    </section>
+
+    <section>
+        <h2>3. レイアウト管理 (Geometry Manager)</h2>
+        <h3><i class="fas fa-layer-group"></i> 3つの配置方法</h3>
+        <p>部品をどこに置くかを決める方法（ジオメトリマネージャ）には3種類あります。</p>
+
+        <h3>1. Pack（パック）</h3>
+        <p>上から順に、ブロックのように積み上げていく方法。一番簡単でよく使います。</p>
+        <pre><code>btn1.pack(side=tk.TOP)    # 上に詰める（デフォルト）
+btn2.pack(side=tk.LEFT)   # 左に詰める
+btn3.pack(pady=10)        # 縦に10pxの隙間を空ける</code></pre>
+
+        <h3>2. Grid（グリッド）</h3>
+        <p>Excelのように「行(row)」と「列(column)」を指定して配置する方法。電卓のようなレイアウトに最適です。</p>
+        <pre><code># 0行目の0列目
+btn1.grid(row=0, column=0)
+# 0行目の1列目
+btn2.grid(row=0, column=1)</code></pre>
+
+        <h3>3. Place（プレイス）</h3>
+        <p>「x=100, y=50」のように座標を直接指定する方法。画面サイズが変わると崩れるので、あまり使いません。</p>
+    </section>
+
+    <section>
+        <h2>4. フレーム (Frame) によるグループ化</h2>
+        <h3><i class="fas fa-object-group"></i> 複雑なレイアウトのために</h3>
+        <p>「上のエリアにはボタンを横並び、下のエリアには画像を」といった配置をする場合、透明な箱である <strong>Frame</strong> を使います。</p>
+        <pre><code># 上部のフレーム
+top_frame = tk.Frame(root)
+top_frame.pack()
+
+# 下部のフレーム
+bottom_frame = tk.Frame(root)
+bottom_frame.pack(side=tk.BOTTOM)
+
+# ボタンは「top_frame」の中に配置する！
+btn1 = tk.Button(top_frame, text="A")
+btn1.pack(side=tk.LEFT)</code></pre>
+    </section>
+
+    <section>
+        <div class="box box-exercise">
+            <h4><i class="fas fa-pencil-alt"></i> 第6回 演習課題</h4>
+            <div style="margin-bottom: 20px;">
+                <p><strong>課題1：信号機レイアウト（Pack）</strong></p>
+                <p>ボタンを3つ作成し、縦に並べて表示してください。<br>
+                それぞれの背景色(bg)を「赤」「黄」「青」にし、テキストも合わせてください。<br>
+                ※ <code>bg="red"</code> のように指定できます。</p>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <p><strong>課題2：電卓レイアウト（Grid）</strong></p>
+                <p>Gridを使って、以下のようにボタンを2x2で配置してください。</p>
+                <table style="width: auto; margin: 0 auto; border: 1px solid #ccc;">
+                    <tr><td style="border:1px solid #ccc; padding:10px;">7</td><td style="border:1px solid #ccc; padding:10px;">8</td></tr>
+                    <tr><td style="border:1px solid #ccc; padding:10px;">4</td><td style="border:1px solid #ccc; padding:10px;">5</td></tr>
+                </table>
+            </div>
+
+            <details>
+                <summary class="toggle-btn"><i class="fas fa-key"></i> 解答例を表示する</summary>
+                <div style="margin-top: 20px;">
+                    <p><strong>課題1</strong></p>
+                    <pre><code>import tkinter as tk
+root = tk.Tk()
+
+tk.Button(root, text="赤", bg="red", fg="white").pack(fill=tk.X, padx=20, pady=5)
+tk.Button(root, text="黄", bg="yellow").pack(fill=tk.X, padx=20, pady=5)
+tk.Button(root, text="青", bg="blue", fg="white").pack(fill=tk.X, padx=20, pady=5)
+
+root.mainloop()</code></pre>
+                    
+                    <p><strong>課題2</strong></p>
+                    <pre><code>import tkinter as tk
+root = tk.Tk()
+
+tk.Button(root, text="7").grid(row=0, column=0, padx=5, pady=5)
+tk.Button(root, text="8").grid(row=0, column=1, padx=5, pady=5)
+tk.Button(root, text="4").grid(row=1, column=0, padx=5, pady=5)
+tk.Button(root, text="5").grid(row=1, column=1, padx=5, pady=5)
+
+root.mainloop()</code></pre>
+                </div>
+            </details>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Python Programming Course for Freshmen.</p>
+    </footer>
+</div>
+
+</body>
+</html>

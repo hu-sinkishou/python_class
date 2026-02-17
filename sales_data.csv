@@ -1,0 +1,16 @@
+Date,Product,Price,Quantity,Region,City
+2023-01-05,Apple,100,5,Kanto,Tokyo
+2023-01-06,Orange,80,10,Kanto,Yokohama
+2023-01-08,Banana,150,3,Kansai,Osaka
+2023-01-10,Apple,100,2,Kansai,Kyoto
+2023-01-12,Grape,300,1,Kanto,Tokyo
+2023-01-15,Orange,80,5,Kyushu,Fukuoka
+2023-01-18,Apple,100,8,Kanto,Tokyo
+2023-01-20,Banana,150,4,Kansai,Osaka
+2023-01-22,Apple,100,3,Kyushu,Fukuoka
+2023-01-25,Grape,300,2,Kanto,Yokohama
+2023-02-01,Melon,1000,1,Kanto,Tokyo
+2023-02-03,Apple,100,10,Kansai,Osaka
+2023-02-05,Banana,150,6,Kanto,Tokyo
+2023-02-08,Orange,80,2,Kyushu,Fukuoka
+2023-02-12,Peach,250,3,Kanto,Saitama

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第1回：Pythonをはじめよう | 情報系基礎演習</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark-reasonable.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>
+        :root { --primary: #306998; --secondary: #FFD43B; --accent: #E05D44; --text: #333; --bg: #F4F6F9; --white: #ffffff; --code-bg: #282c34; }
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.8; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: var(--white); padding: 60px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        header { text-align: center; margin-bottom: 50px; border-bottom: 3px solid var(--secondary); padding-bottom: 20px; }
+        .tag { background: var(--primary); color: var(--white); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-bottom: 10px; }
+        h1 { font-size: 2.5rem; color: var(--primary); margin: 10px 0; }
+        .subtitle { color: #666; font-size: 1.1rem; }
+        section { margin-bottom: 80px; }
+        h2 { font-size: 1.8rem; border-left: 8px solid var(--secondary); padding-left: 15px; margin-bottom: 25px; color: #2c3e50; background: linear-gradient(to right, #fffaf0, transparent); padding-top: 5px; padding-bottom: 5px; }
+        h3 { font-size: 1.4rem; margin-top: 40px; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #444; display: flex; align-items: center; gap: 10px; }
+        p { margin-bottom: 1.5rem; }
+        pre { background: var(--code-bg); border-radius: 8px; padding: 20px; overflow-x: auto; font-family: 'Roboto Mono', monospace; position: relative; margin: 20px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        pre::before { content: "Python"; position: absolute; top: 0; right: 0; background: #444; color: #ccc; font-size: 0.8rem; padding: 3px 10px; border-radius: 0 8px 0 8px; }
+        code { font-size: 1rem; }
+        .box { padding: 25px; border-radius: 8px; margin: 30px 0; }
+        .box-point { background: #e8f4fd; border-left: 5px solid var(--primary); }
+        .box-point h4 { color: var(--primary); margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px; font-size: 1.2rem; }
+        .box-warn { background: #fff5f5; border-left: 5px solid var(--accent); }
+        .box-warn h4 { color: var(--accent); margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px; font-size: 1.2rem; }
+        .box-exercise { background: #fff9db; border: 2px dashed var(--secondary); }
+        .box-exercise h4 { color: #e67700; margin: 0 0 15px 0; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f8f9fa; color: var(--primary); width: 30%; }
+        footer { text-align: center; margin-top: 80px; font-size: 0.9rem; color: #888; border-top: 1px solid #eee; padding-top: 30px; }
+        .toggle-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s; font-size: 1rem; }
+        .toggle-btn:hover { background: #204d74; }
+        details[open] summary ~ * { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <span class="tag">第1回</span>
+        <h1>Pythonをはじめよう</h1>
+        <p class="subtitle">変数、データ型、そして入出力の世界へ</p>
+    </header>
+
+    <section>
+        <h2>0. はじめに：なぜPythonなのか？</h2>
+        <p>プログラミング言語には「C言語」「Java」「JavaScript」など数多くの種類がありますが、なぜ大学の初等教育で<strong>Python（パイソン）</strong>が選ばれるのでしょうか？</p>
+        <div class="box box-point">
+            <h4><i class="fas fa-check-circle"></i> Pythonの3つの強み</h4>
+            <ul>
+                <li><strong>読みやすい</strong>：英文法に近く、初心者でもコードの意味が直感的に理解しやすい。</li>
+                <li><strong>汎用性が高い</strong>：Webアプリ、ゲーム、AI、データ分析、ロボット制御まで何でも作れる。</li>
+                <li><strong>ライブラリが豊富</strong>：世界中の天才たちが作った「便利な道具箱（ライブラリ）」が無料で使える。</li>
+            </ul>
+        </div>
+        <p>今回は、この強力なツールを使ってコンピュータと対話する第一歩を踏み出します。</p>
+    </section>
+
+    <section>
+        <h2>1. 画面への表示 (Print)</h2>
+        <h3><i class="fas fa-desktop"></i> Hello, World!</h3>
+        <p>プログラミングの第一歩は、画面に文字を表示させることです。<code>print()</code> 関数を使います。</p>
+
+        <pre><code># 文字列 (String) - クォーテーションで囲む
+print("Hello, Python!")
+print('こんにちは、世界')
+
+# 数値 (Number) - そのまま書く
+print(100)
+print(3.14)
+
+# 計算式 - 計算結果が表示される
+print(10 + 20)      # 30
+print(100 * 1.1)    # 110.0</code></pre>
+
+        <div class="box box-warn">
+            <h4><i class="fas fa-exclamation-triangle"></i> クォーテーションの罠</h4>
+            <p>以下の違いに注目してください。</p>
+            <ul>
+                <li><code>print(1 + 1)</code> → <strong>2</strong> （数値の足し算）</li>
+                <li><code>print("1" + "1")</code> → <strong>11</strong> （文字の結合）</li>
+            </ul>
+            <p><code>""</code> で囲むと、数字であっても「文字」として扱われます。</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>2. 変数 (Variables)</h2>
+        <h3><i class="fas fa-box-open"></i> データを入れる「名前付きの箱」</h3>
+        <p>プログラムの中で、計算結果や文字を一時的に保存しておく場所を「変数（へんすう）」と呼びます。</p>
+
+        <div class="box box-point">
+            <h4><i class="fas fa-pen-nib"></i> 変数のルール</h4>
+            <ol>
+                <li><code>変数名 = 値</code> で代入する。（右から左へ！）</li>
+                <li>変数名は「英小文字」と「アンダースコア」を使うのが一般的（例：<code>user_name</code>）。</li>
+                <li>数字から始まる名前はつけられない（例：<code>1st_place</code> はNG）。</li>
+            </ol>
+        </div>
+
+        <pre><code># 代入（箱に入れる）
+apple_price = 100
+count = 3
+
+# 計算に使う
+total_price = apple_price * count
+
+# 表示する
+print(total_price)  # 300</code></pre>
+
+        <h3>変数の上書き</h3>
+        <p>変数はその名の通り「変わる数」です。中身を入れ替えることができます。</p>
+        <pre><code>hp = 100
+print(hp)  # 100
+
+hp = 50    # ダメージを受けた！
+print(hp)  # 50
+
+hp = hp + 20 # 回復した！
+print(hp)    # 70</code></pre>
+    </section>
+
+    <section>
+        <h2>3. データ型 (Data Types)</h2>
+        <h3><i class="fas fa-shapes"></i> コンピュータにとっての「種類」</h3>
+        <p>人間は「10」も「あ」も同じように文字として認識しますが、コンピュータは厳密に区別します。</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>型名 (Type)</th>
+                    <th>説明</th>
+                    <th>例</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>int</strong> (Integer)</td>
+                    <td>整数。個数や回数などの計算に使う。</td>
+                    <td>10, -5, 0</td>
+                </tr>
+                <tr>
+                    <td><strong>float</strong></td>
+                    <td>浮動小数点数（小数）。精密な計算に使う。</td>
+                    <td>3.14, 0.01, -2.5</td>
+                </tr>
+                <tr>
+                    <td><strong>str</strong> (String)</td>
+                    <td>文字列。名前やメッセージの表示に使う。</td>
+                    <td>"Hello", 'あいう'</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>データの型を調べたいときは <code>type()</code> 関数を使います。</p>
+        <pre><code>print(type(10))       # &lt;class 'int'&gt;
+print(type(3.14))     # &lt;class 'float'&gt;
+print(type("Hello"))  # &lt;class 'str'&gt;</code></pre>
+    </section>
+
+    <section>
+        <h2>4. 演算とf-strings</h2>
+        <h3><i class="fas fa-calculator"></i> 算術演算子</h3>
+        <p>Pythonは高性能な電卓としても使えます。</p>
+        <ul>
+            <li><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code> : 基本の四則演算</li>
+            <li><code>//</code> : 割り算の「商」（整数部分）</li>
+            <li><code>%</code> : 割り算の「余り」（剰余）</li>
+            <li><code>**</code> : べき乗（2乗、3乗など）</li>
+        </ul>
+        <pre><code>print(10 / 3)   # 3.33333...
+print(10 // 3)  # 3
+print(10 % 3)   # 1
+print(2 ** 3)   # 8 (2の3乗)</code></pre>
+
+        <h3><i class="fas fa-magic"></i> f-strings（フォーマット文字列）</h3>
+        <p>変数の値を文章の中に埋め込みたいとき、昔は面倒な結合処理が必要でしたが、今は <strong>f-strings</strong> があります。<br>
+        文字列の前に <code>f</code> をつけ、変数を <code>{ }</code> で囲むだけです。</p>
+
+        <pre><code>name = "田中"
+age = 19
+height = 175.5
+
+# fをつけると { } の中身が展開される
+print(f"私は {name} です。年齢は {age} 歳です。")
+print(f"身長は {height} cmです。")</code></pre>
+    </section>
+
+    <section>
+        <h2>5. ユーザー入力 (Input)</h2>
+        <h3><i class="fas fa-keyboard"></i> 対話的なプログラムへ</h3>
+        <p>プログラム実行中に、ユーザーに値を入力してもらうには <code>input()</code> を使います。</p>
+
+        <div class="box box-warn">
+            <h4><i class="fas fa-bomb"></i> Inputの最大の罠</h4>
+            <p><code>input()</code> で受け取ったデータは、<strong>全て「文字列(str)」になります。</strong><br>
+            たとえキーボードで「100」と打っても、コンピュータは「イチ・ゼロ・ゼロという文字」として受け取ります。<br>
+            計算に使いたい場合は、<code>int()</code> や <code>float()</code> で変換（キャスト）する必要があります。</p>
+        </div>
+
+        <pre><code># 文字列として受け取る
+name = input("あなたの名前は？: ")
+print(f"ようこそ、{name}さん！")
+
+# 数値として受け取りたい場合
+age_str = input("年齢を入力してください: ")
+# 変換する
+age = int(age_str) 
+
+print(f"来年は {age + 1} 歳ですね。")</code></pre>
+    </section>
+
+    <section>
+        <div class="box box-exercise">
+            <h4><i class="fas fa-pencil-alt"></i> 第1回 演習課題</h4>
+            
+            <div style="margin-bottom: 20px;">
+                <p><strong>課題1：自己紹介カード</strong></p>
+                <p><code>input</code> を使って「名前」「出身地」「好きな食べ物」を入力させ、最後に以下のようにまとめて表示するプログラムを作成してください。</p>
+                <pre style="background:#fff; color:#333; padding:10px;">（出力例）
+-- 自己紹介 --
+名前：山田太郎
+出身：東京都
+好物：ラーメン</pre>
+            </div>
+
+            <div>
+                <p><strong>課題2：BMI計算機</strong></p>
+                <p>身長(cm)と体重(kg)を入力させ、BMIを計算して表示してください。<br>
+                計算式：$$ \text{BMI} = \frac{\text{体重(kg)}}{(\text{身長(m)} \times \text{身長(m)})} $$</p>
+                <p>※ 入力された身長はcmなので、mに直す（100で割る）のを忘れずに！</p>
+            </div>
+
+            <details>
+                <summary class="toggle-btn"><i class="fas fa-key"></i> 解答例を表示する</summary>
+                <div style="margin-top: 20px;">
+                    <p><strong>課題1の解答</strong></p>
+                    <pre><code>name = input("名前: ")
+place = input("出身: ")
+food = input("好物: ")
+
+print("-- 自己紹介 --")
+print(f"名前：{name}")
+print(f"出身：{place}")
+print(f"好物：{food}")</code></pre>
+                    
+                    <p><strong>課題2の解答</strong></p>
+                    <pre><code># 入力を受け取って float(小数) に変換
+h_cm = float(input("身長(cm): "))
+w_kg = float(input("体重(kg): "))
+
+# cmをmに変換
+h_m = h_cm / 100
+
+# BMI計算
+bmi = w_kg / (h_m ** 2)
+
+# 小数点第2位まで表示（:.2f）
+print(f"あなたのBMIは {bmi:.2f} です")</code></pre>
+                </div>
+            </details>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Python Programming Course for Freshmen.</p>
+    </footer>
+</div>
+
+</body>
+</html>

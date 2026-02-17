@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第4回：部品化と再利用 | 情報系基礎演習</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark-reasonable.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>
+        /* 共通スタイル */
+        :root { --primary: #306998; --secondary: #FFD43B; --accent: #E05D44; --text: #333; --bg: #F4F6F9; --white: #ffffff; --code-bg: #282c34; }
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.8; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: var(--white); padding: 60px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        header { text-align: center; margin-bottom: 50px; border-bottom: 3px solid var(--secondary); padding-bottom: 20px; }
+        .tag { background: var(--primary); color: var(--white); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-bottom: 10px; }
+        h1 { font-size: 2.5rem; color: var(--primary); margin: 10px 0; }
+        .subtitle { color: #666; font-size: 1.1rem; }
+        section { margin-bottom: 80px; }
+        h2 { font-size: 1.8rem; border-left: 8px solid var(--secondary); padding-left: 15px; margin-bottom: 25px; color: #2c3e50; background: linear-gradient(to right, #fffaf0, transparent); padding-top: 5px; padding-bottom: 5px; }
+        h3 { font-size: 1.4rem; margin-top: 40px; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #444; display: flex; align-items: center; gap: 10px; }
+        p { margin-bottom: 1.5rem; }
+        pre { background: var(--code-bg); border-radius: 8px; padding: 20px; overflow-x: auto; font-family: 'Roboto Mono', monospace; position: relative; margin: 20px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        pre::before { content: "Python"; position: absolute; top: 0; right: 0; background: #444; color: #ccc; font-size: 0.8rem; padding: 3px 10px; border-radius: 0 8px 0 8px; }
+        code { font-size: 1rem; }
+        .box { padding: 25px; border-radius: 8px; margin: 30px 0; }
+        .box-point { background: #e8f4fd; border-left: 5px solid var(--primary); }
+        .box-point h4 { color: var(--primary); margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px; font-size: 1.2rem; }
+        .box-warn { background: #fff5f5; border-left: 5px solid var(--accent); }
+        .box-warn h4 { color: var(--accent); margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px; font-size: 1.2rem; }
+        .box-exercise { background: #fff9db; border: 2px dashed var(--secondary); }
+        .box-exercise h4 { color: #e67700; margin: 0 0 15px 0; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f8f9fa; color: var(--primary); width: 30%; }
+        footer { text-align: center; margin-top: 80px; font-size: 0.9rem; color: #888; border-top: 1px solid #eee; padding-top: 30px; }
+        .toggle-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s; font-size: 1rem; }
+        .toggle-btn:hover { background: #204d74; }
+        details[open] summary ~ * { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* 関数図解用のスタイル */
+        .func-diagram { display: flex; justify-content: center; align-items: center; gap: 15px; margin: 30px 0; font-weight: bold; }
+        .func-box { background: var(--secondary); padding: 15px 30px; border-radius: 8px; border: 2px solid #e67700; color: #333; position: relative; }
+        .func-arrow { font-size: 24px; color: #888; }
+        .func-io { background: #e8f4fd; padding: 10px 20px; border-radius: 20px; border: 2px solid var(--primary); color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <span class="tag">第4回</span>
+        <h1>部品化と再利用</h1>
+        <p class="subtitle">関数とモジュールでプログラムを効率化する</p>
+    </header>
+
+    <section>
+        <h2>0. はじめに：DRY原則と関数の役割</h2>
+        <p>プログラミングには<strong>"Don't Repeat Yourself"（同じことを繰り返すな）</strong>という重要な格言があります（DRY原則）。<br>
+        同じ計算処理を何度もコピペしていませんか？ コピペはバグの温床です。<br>
+        処理をひとまとめにして名前をつけ、何度でも呼び出せるようにしたものが「関数」です。</p>
+        
+        <div class="func-diagram">
+            <div class="func-io">引数 (Input)</div>
+            <div class="func-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="func-box"><i class="fas fa-cog fa-spin"></i> 関数 (Process)</div>
+            <div class="func-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="func-io">戻り値 (Output)</div>
+        </div>
+        <p style="text-align: center;">関数は「材料」を入れると「成果物」を返してくれる魔法の箱です。</p>
+    </section>
+
+    <section>
+        <h2>1. 関数 (Function) の基本</h2>
+        <h3><i class="fas fa-code"></i> 定義と呼び出し</h3>
+        <p>関数を作ることを「定義 (Define)」、使うことを「呼び出し (Call)」と言います。</p>
+
+        <div class="box box-point">
+            <h4><i class="fas fa-pen-nib"></i> 関数の構文</h4>
+            <pre style="margin:0; background:none; padding:0; box-shadow:none;"><code>def 関数名(引数1, 引数2, ...):
+    """関数の説明（ドキュメント）"""
+    実行したい処理
+    return 戻り値</code></pre>
+        </div>
+
+        <pre><code># 1. 関数を作る（定義）
+def tasizan(a, b):
+    answer = a + b
+    return answer
+
+# 2. 関数を使う（呼び出し）
+# ここで初めて関数の中身が実行される
+result = tasizan(3, 5)
+print(result)  # 8
+
+# 何度でも使える！引数を変えれば結果も変わる
+print(tasizan(100, 200)) # 300</code></pre>
+
+        <h3><i class="fas fa-exchange-alt"></i> PrintとReturnの決定的違い</h3>
+        <p>初心者が最もつまずくポイントです。この違いを理解しないと、関数を使いこなせません。</p>
+        
+        <table style="width:100%;">
+            <tr>
+                <th style="width:20%">機能</th>
+                <th>print()</th>
+                <th>return</th>
+            </tr>
+            <tr>
+                <td><strong>目的</strong></td>
+                <td>人間に文字を見せるため</td>
+                <td>プログラムに結果を渡すため</td>
+            </tr>
+            <tr>
+                <td><strong>再利用</strong></td>
+                <td><span style="color:red">できない</span>（ただの文字表示）</td>
+                <td><span style="color:green">できる</span>（変数に入れたり計算に使える）</td>
+            </tr>
+            <tr>
+                <td><strong>終了</strong></td>
+                <td>処理は続く</td>
+                <td>関数の処理はそこで<strong>即終了</strong>する</td>
+            </tr>
+        </table>
+
+        <pre><code>def bad_add(a, b):
+    print(a + b)  # 表示するだけ
+
+def good_add(a, b):
+    return a + b  # 値を返す
+
+# printの方は変数に入れても「なし(None)」になる
+x = bad_add(10, 20)
+# print(x + 5) -> エラー！ Noneと数字は足せない
+
+# returnの方は計算に使える
+y = good_add(10, 20)
+print(y + 5)   # 35 (OK!)</code></pre>
+    </section>
+
+    <section>
+        <h2>2. 引数の高度な使い方</h2>
+        <h3><i class="fas fa-sliders-h"></i> デフォルト引数 (Default Arguments)</h3>
+        <p>引数に「初期値」を設定できます。呼び出すときに値を省略すると、初期値が使われます。<br>
+        「基本設定」と「カスタム設定」を使い分けたいときに便利です。</p>
+        <pre><code># taxのデフォルトを1.1(10%)にする
+def calc_price(price, tax=1.1):
+    return int(price * tax)
+
+print(calc_price(1000))       # 1100 (省略したので1.1が使われる)
+print(calc_price(1000, 1.08)) # 1080 (8%を指定)</code></pre>
+
+        <h3><i class="fas fa-tag"></i> キーワード引数 (Keyword Arguments)</h3>
+        <p>引数の順番を覚えていなくても、名前を指定して値を渡せます。</p>
+        <pre><code>def profile(name, age, city):
+    print(f"{name}さんは{city}住みの{age}歳です")
+
+# 順番通り
+profile("田中", 20, "東京")
+
+# 名前指定なら順番バラバラでもOK！
+profile(age=22, city="大阪", name="鈴木")</code></pre>
+    </section>
+
+    <section>
+        <h2>3. 戻り値の応用</h2>
+        <h3><i class="fas fa-layer-group"></i> 複数の値を返す</h3>
+        <p>Pythonの関数は、カンマで区切ることで複数の値を一度に返せます。</p>
+        <pre><code>def get_stats(scores):
+    return max(scores), min(scores), sum(scores) / len(scores)
+
+# まとめて受け取る
+data = [10, 20, 30, 40, 50]
+highest, lowest, average = get_stats(data)
+
+print(f"最高:{highest}, 最低:{lowest}, 平均:{average}")</code></pre>
+    </section>
+
+    <section>
+        <h2>4. スコープ (変数の有効範囲)</h2>
+        <h3><i class="fas fa-globe"></i> ローカル変数とグローバル変数</h3>
+        <p>変数は「どこで生まれたか」によって、使える場所が決まっています。</p>
+        <ul>
+            <li><strong>ローカル変数</strong>：関数の中で作った変数。<span style="color:red">関数の外からは見えない。</span></li>
+            <li><strong>グローバル変数</strong>：関数の外で作った変数。どこからでも見える。</li>
+        </ul>
+        <pre><code>points = 100 # グローバル
+
+def game():
+    bonus = 50 # ローカル
+    print(points) # OK: 外の変数は見える
+    
+game()
+# print(bonus) -> エラー！ 関数の中の変数は外から見えない</code></pre>
+        <div class="box box-warn">
+            <h4><i class="fas fa-exclamation-triangle"></i> 安全設計のために</h4>
+            <p>関数の中では、できるだけグローバル変数を使わず、<strong>引数で受け取って戻り値で返す</strong>ようにしましょう。<br>
+            どの関数がどの変数を書き換えたか分からなくなるバグを防ぐためです。</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>5. より良いコードを書くために</h2>
+        <h3><i class="fas fa-info-circle"></i> 型ヒント (Type Hints)</h3>
+        <p>Pythonは変数の型を自動判定しますが、明示的に書くことで読みやすくなります（最近の実務では必須級です）。</p>
+        <pre><code># 引数はint, 戻り値もint と明示する
+def add(a: int, b: int) -> int:
+    return a + b</code></pre>
+
+        <h3><i class="fas fa-file-alt"></i> ドキュメンテーション文字列 (Docstring)</h3>
+        <p>関数の直下に <code>""" """</code> で説明を書くと、関数の説明書になります。</p>
+        <pre><code>def warikan(total, num):
+    """
+    割り勘の計算をする関数
+    total: 合計金額
+    num: 人数
+    return: 一人当たりの金額
+    """
+    return total // num</code></pre>
+    </section>
+
+    <section>
+        <h2>6. モジュール (Module)</h2>
+        <h3><i class="fas fa-toolbox"></i> 巨人の肩に乗る</h3>
+        <p>Pythonには「標準ライブラリ」と呼ばれる便利な道具箱が最初から入っています。</p>
+
+        <h3>Randomモジュール（乱数）</h3>
+        <pre><code>import random
+
+# サイコロ
+print(random.randint(1, 6))
+
+# ランダム選択
+fruits = ["りんご", "みかん", "ぶどう"]
+print(random.choice(fruits))
+
+# シャッフル
+numbers = [1, 2, 3, 4, 5]
+random.shuffle(numbers)
+print(numbers)</code></pre>
+
+        <h3>Mathモジュール（数学）</h3>
+        <pre><code>import math
+
+print(math.pi)       # 円周率
+print(math.sqrt(25)) # ルート
+print(math.ceil(4.2)) # 切り上げ -> 5</code></pre>
+
+        <h3>Datetimeモジュール（日付と時間）</h3>
+        <p>ログを取ったり、経過時間を測るのに使います。</p>
+        <pre><code>import datetime
+
+now = datetime.datetime.now()
+print(now)              # 2023-10-05 12:34:56.789
+print(now.year)         # 年だけ取得
+print(now.strftime("%Y年%m月%d日")) # フォーマット変換</code></pre>
+    </section>
+
+    <section>
+        <div class="box box-exercise">
+            <h4><i class="fas fa-pencil-alt"></i> 第4回 演習課題</h4>
+            
+            <div style="margin-bottom: 20px;">
+                <p><strong>課題1：統計関数</strong></p>
+                <p>数値のリストを受け取り、その「合計」「平均」「最大値」の3つをまとめてreturnする関数 <code>analyze_list</code> を作成してください。<br>
+                作成後、<code>data = [10, 50, 20, 30, 40]</code> を渡して結果を表示してください。</p>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <p><strong>課題2：勇者の攻撃（デフォルト引数）</strong></p>
+                <p>勇者の攻撃ダメージを計算する関数 <code>attack</code> を作成してください。<br>
+                引数は <code>attack_power</code>（攻撃力）と <code>critical</code>（クリティカル倍率）です。<br>
+                <code>critical</code> は省略可能で、デフォルトは 1.0（倍率なし）にしてください。<br>
+                戻り値は <code>攻撃力 * クリティカル倍率</code> です。</p>
+            </div>
+
+            <div>
+                <p><strong>課題3：ガチャシミュレータ（モジュール活用）</strong></p>
+                <p>リスト <code>["N", "R", "SR", "SSR"]</code> からランダムに1つ排出する関数 <code>gacha</code> を作ってください。<br>
+                さらに、for文を使ってこのガチャを10回回し、出た結果をすべて表示するプログラムを書いてください。</p>
+            </div>
+
+            <details>
+                <summary class="toggle-btn"><i class="fas fa-key"></i> 解答例を表示する</summary>
+                <div style="margin-top: 20px;">
+                    <p><strong>課題1</strong></p>
+                    <pre><code>def analyze_list(numbers):
+    total = sum(numbers)
+    avg = total / len(numbers)
+    maximum = max(numbers)
+    return total, avg, maximum
+
+data = [10, 50, 20, 30, 40]
+t, a, m = analyze_list(data)
+print(f"合計:{t}, 平均:{a}, 最大:{m}")</code></pre>
+                    
+                    <p><strong>課題2</strong></p>
+                    <pre><code>def attack(attack_power, critical=1.0):
+    return int(attack_power * critical)
+
+print(f"通常攻撃: {attack(100)}")
+print(f"会心の一撃: {attack(100, 1.5)}")</code></pre>
+
+                    <p><strong>課題3</strong></p>
+                    <pre><code>import random
+
+def gacha():
+    rarity = ["N", "R", "SR", "SSR"]
+    # 重み付け抽選（choices）を使うと確率を変えられる（発展）
+    # 今回は単純なchoiceを使用
+    return random.choice(rarity)
+
+print("--- 10連ガチャ ---")
+for i in range(10):
+    result = gacha()
+    print(f"{i+1}回目: {result}")</code></pre>
+                </div>
+            </details>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Python Programming Course for Freshmen.</p>
+    </footer>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第2回：プログラムの制御 | 情報系基礎演習</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark-reasonable.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>
+        :root { --primary: #306998; --secondary: #FFD43B; --accent: #E05D44; --text: #333; --bg: #F4F6F9; --white: #ffffff; --code-bg: #282c34; }
+        body { font-family: 'Noto Sans JP', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.8; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: var(--white); padding: 60px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        header { text-align: center; margin-bottom: 50px; border-bottom: 3px solid var(--secondary); padding-bottom: 20px; }
+        .tag { background: var(--primary); color: var(--white); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-bottom: 10px; }
+        h1 { font-size: 2.5rem; color: var(--primary); margin: 10px 0; }
+        .subtitle { color: #666; font-size: 1.1rem; }
+        section { margin-bottom: 80px; }
+        h2 { font-size: 1.8rem; border-left: 8px solid var(--secondary); padding-left: 15px; margin-bottom: 25px; color: #2c3e50; background: linear-gradient(to right, #fffaf0, transparent); padding-top: 5px; padding-bottom: 5px; }
+        h3 { font-size: 1.4rem; margin-top: 40px; border-bottom: 2px solid #eee; padding-bottom: 10px; color: #444; display: flex; align-items: center; gap: 10px; }
+        p { margin-bottom: 1.5rem; }
+        
+        pre { background: var(--code-bg); border-radius: 8px; padding: 20px; overflow-x: auto; font-family: 'Roboto Mono', monospace; position: relative; margin: 20px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        pre::before { content: "Python"; position: absolute; top: 0; right: 0; background: #444; color: #ccc; font-size: 0.8rem; padding: 3px 10px; border-radius: 0 8px 0 8px; }
+        code { font-size: 1rem; }
+
+        .box { padding: 25px; border-radius: 8px; margin: 30px 0; }
+        .box-point { background: #e8f4fd; border-left: 5px solid var(--primary); }
+        .box-point h4 { color: var(--primary); margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px; font-size: 1.2rem; }
+        
+        .box-warn { background: #fff5f5; border-left: 5px solid var(--accent); }
+        .box-warn h4 { color: var(--accent); margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px; font-size: 1.2rem; }
+
+        .box-exercise { background: #fff9db; border: 2px dashed var(--secondary); }
+        .box-exercise h4 { color: #e67700; margin: 0 0 15px 0; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f8f9fa; color: var(--primary); width: 30%; }
+
+        .flow-chart { display: flex; justify-content: center; margin: 30px 0; gap: 20px; flex-wrap: wrap; }
+        .flow-step { background: #eee; padding: 10px 20px; border-radius: 5px; border: 1px solid #ccc; display: flex; align-items: center; }
+        .flow-arrow { display: flex; align-items: center; color: #888; font-size: 1.2rem; }
+
+        footer { text-align: center; margin-top: 80px; font-size: 0.9rem; color: #888; border-top: 1px solid #eee; padding-top: 30px; }
+
+        .toggle-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s; font-size: 1rem; }
+        .toggle-btn:hover { background: #204d74; }
+        details[open] summary ~ * { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <span class="tag">第2回</span>
+        <h1>プログラムの制御</h1>
+        <p class="subtitle">条件分岐とループで「アルゴリズム」を構築する</p>
+    </header>
+
+    <section>
+        <h2>0. はじめに：プログラムに「脳」を与える</h2>
+        <p>第1回で学んだプログラムは、上から下へ一本道で進むだけでした。しかし、これでは「電卓」と変わりません。<br>
+        高度なプログラムには、状況に応じた<strong>「判断」</strong>と、大量のデータを処理する<strong>「繰り返し」</strong>が必要です。</p>
+        
+        <div class="flow-chart">
+            <div class="flow-step">入力</div>
+            <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="flow-step" style="background:#fff3cd; border-color:#ffeeba;"><strong>判断 (If)</strong></div>
+            <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="flow-step" style="background:#d1e7dd; border-color:#badbcc;"><strong>繰り返し (Loop)</strong></div>
+            <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+            <div class="flow-step">出力</div>
+        </div>
+
+        <p>今回は、プログラミングの核心部分である「制御構造」を学びます。ここをマスターすれば、簡単なAIやゲームのロジックを作れるようになります。</p>
+    </section>
+
+    <section>
+        <h2>1. 比較演算子と真偽値</h2>
+        <h3><i class="fas fa-balance-scale"></i> 正しいか、間違いか</h3>
+        <p>条件分岐を行うためには、コンピュータに「条件」を伝える必要があります。<br>
+        コンピュータに質問をすると、<code>True</code>（はい、真）または <code>False</code>（いいえ、偽）という「ブール値 (Boolean)」で答えてくれます。</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>記号</th>
+                    <th>意味</th>
+                    <th>コード例 (x=10)</th>
+                    <th>結果</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>==</code></td>
+                    <td>等しい</td>
+                    <td><code>x == 10</code></td>
+                    <td><span style="color:green; font-weight:bold;">True</span></td>
+                </tr>
+                <tr>
+                    <td><code>!=</code></td>
+                    <td>等しくない</td>
+                    <td><code>x != 5</code></td>
+                    <td><span style="color:green; font-weight:bold;">True</span></td>
+                </tr>
+                <tr>
+                    <td><code>&gt;</code></td>
+                    <td>より大きい</td>
+                    <td><code>x &gt; 20</code></td>
+                    <td><span style="color:red; font-weight:bold;">False</span></td>
+                </tr>
+                <tr>
+                    <td><code>&lt;</code></td>
+                    <td>より小さい</td>
+                    <td><code>x &lt; 5</code></td>
+                    <td><span style="color:red; font-weight:bold;">False</span></td>
+                </tr>
+                <tr>
+                    <td><code>&gt;=</code></td>
+                    <td>以上</td>
+                    <td><code>x &gt;= 10</code></td>
+                    <td><span style="color:green; font-weight:bold;">True</span></td>
+                </tr>
+                <tr>
+                    <td><code>&lt;=</code></td>
+                    <td>以下</td>
+                    <td><code>x &lt;= 10</code></td>
+                    <td><span style="color:green; font-weight:bold;">True</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="box box-warn">
+            <h4><i class="fas fa-exclamation-circle"></i> 注意：イコールは2つ！</h4>
+            <p>初心者が最もよくやる間違いです。</p>
+            <ul>
+                <li><code>=</code> (イコール1つ)：<strong>代入</strong>（右の値を左に入れる）</li>
+                <li><code>==</code> (イコール2つ)：<strong>比較</strong>（左右が等しいか確認する）</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h2>2. 論理演算子 (Logical Operators)</h2>
+        <h3><i class="fas fa-link"></i> 複数の条件を組み合わせる</h3>
+        <p>現実世界では「土曜日 <strong>かつ</strong> 晴れ なら遊びに行く」「スマホ <strong>または</strong> 財布があれば外出できる」のように、複数の条件を組み合わせることがよくあります。<br>
+        Pythonでは <code>and</code>, <code>or</code>, <code>not</code> を使います。</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>演算子</th>
+                    <th>意味</th>
+                    <th>例</th>
+                    <th>説明</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>and</code></td>
+                    <td>〜かつ〜</td>
+                    <td><code>A and B</code></td>
+                    <td>AとBが<strong>両方True</strong>ならTrue</td>
+                </tr>
+                <tr>
+                    <td><code>or</code></td>
+                    <td>〜または〜</td>
+                    <td><code>A or B</code></td>
+                    <td>AとBの<strong>どちらか一方でもTrue</strong>ならTrue</td>
+                </tr>
+                <tr>
+                    <td><code>not</code></td>
+                    <td>〜ではない（反転）</td>
+                    <td><code>not A</code></td>
+                    <td>AがTrueならFalse、FalseならTrue</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <pre><code>age = 20
+has_ticket = True
+
+# 「20歳以上」かつ「チケットを持っている」
+if age >= 18 and has_ticket:
+    print("入場できます")
+else:
+    print("入場できません")</code></pre>
+    </section>
+
+    <section>
+        <h2>3. 条件分岐 (If Statement)</h2>
+        <h3><i class="fas fa-code-branch"></i> もし〜なら、こうする</h3>
+        <p>条件によって実行する処理を切り替える構文です。</p>
+
+        <div class="box box-point">
+            <h4><i class="fas fa-pen-nib"></i> If文の構文</h4>
+            <pre style="margin:0; background:none; padding:0; box-shadow:none;"><code>if 条件式:
+    条件が True のときの処理
+    (インデントが必要！)
+else:
+    条件が False のときの処理</code></pre>
+        </div>
+
+        <p>Pythonでは、<strong>インデント（字下げ）</strong>が非常に重要です。条件の中身は、Tabキーまたはスペース4つ分右にずらす必要があります。これが「ブロック（処理のかたまり）」を表します。</p>
+
+        <pre><code>score = 85
+
+if score >= 60:
+    print("合格です！")
+    print("おめでとう！")
+else:
+    print("不合格です...")
+    print("再テストを受けましょう")
+
+print("判定終了")  # これはifの外なので必ず実行される</code></pre>
+
+        <h3>3つ以上の分岐 (elif)</h3>
+        <p>「Aなら...、Bなら...、それ以外なら...」と分岐を増やしたいときは <code>elif</code> (else ifの略) を使います。</p>
+
+        <pre><code>score = 75
+
+if score >= 90:
+    print("評価：S")
+elif score >= 70:
+    print("評価：B")  # ここが実行される
+elif score >= 60:
+    print("評価：C")
+else:
+    print("評価：D")</code></pre>
+
+        <h3>入れ子のIf文 (Nested If)</h3>
+        <p>If文の中にさらにIf文を入れることもできます。</p>
+        <pre><code>age = 20
+has_id = False
+
+if age >= 20:
+    if has_id:
+        print("お酒を販売できます")
+    else:
+        print("年齢確認書類が必要です")
+else:
+    print("お酒は販売できません")</code></pre>
+    </section>
+
+    <section>
+        <h2>4. 繰り返し (For Loop)</h2>
+        <h3><i class="fas fa-redo"></i> 決まった回数のループ</h3>
+        <p>「100回計算する」「リスト全員にメールを送る」といった処理にはループを使います。</p>
+
+        <div class="box box-point">
+            <h4><i class="fas fa-pen-nib"></i> For文の構文</h4>
+            <pre style="margin:0; background:none; padding:0; box-shadow:none;"><code>for 変数 in range(回数):
+    繰り返したい処理</code></pre>
+        </div>
+
+        <h3>range関数の使い方（詳細）</h3>
+        <p><code>range()</code> は、連続した数字を作り出す魔法の関数です。3つの書き方があります。</p>
+        <ul>
+            <li><code>range(終了)</code>: 0 から 終了-1 まで<br>例: <code>range(3)</code> → 0, 1, 2</li>
+            <li><code>range(開始, 終了)</code>: 開始 から 終了-1 まで<br>例: <code>range(1, 5)</code> → 1, 2, 3, 4</li>
+            <li><code>range(開始, 終了, 増分)</code>: 数字を飛ばしながら<br>例: <code>range(1, 10, 2)</code> → 1, 3, 5, 7, 9</li>
+        </ul>
+
+        <pre><code># 3回繰り返す
+for i in range(3):
+    print(f"{i}回目のハロー！")</code></pre>
+
+        <h3>合計値を計算する (Accumulator)</h3>
+        <p>ループの中で変数を更新していくことで、合計値を計算できます。</p>
+
+        <pre><code>total = 0  # 合計を入れる箱を空(0)にしておく
+
+for i in range(1, 101):  # 1から100まで
+    total = total + i
+
+print(f"1から100までの合計: {total}")</code></pre>
+    </section>
+
+    <section>
+        <h2>5. 条件による繰り返し (While Loop)</h2>
+        <h3><i class="fas fa-sync"></i> 〜の間、繰り返す</h3>
+        <p>回数が決まっておらず、<strong>「条件が満たされている間はずっと繰り返す」</strong>という場合は <code>while</code> 文を使います。<br>
+        ゲームのメインループや、正しい入力があるまで待つ処理などに使われます。</p>
+
+        <pre><code>hp = 3  # 体力
+
+while hp > 0:
+    print(f"勇者は戦っている (HP: {hp})")
+    hp = hp - 1  # ダメージを受ける
+
+print("勇者は倒れた...")</code></pre>
+
+        <div class="box box-warn">
+            <h4><i class="fas fa-skull-crossbones"></i> 無限ループに注意！</h4>
+            <p><code>while</code> 文を使うときは、いつか必ず条件が <code>False</code> になるようにする必要があります。<br>
+            条件が変わらないと、プログラムが永遠に止まらなくなります（無限ループ）。</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>6. ループの制御 (Break & Continue)</h2>
+        <h3><i class="fas fa-traffic-light"></i> ループの流れを変える</h3>
+        <p>ループの途中で強制終了したり、スキップしたりするための命令です。</p>
+
+        <ul>
+            <li><strong>break</strong>: ループをその場で中断して脱出する。</li>
+            <li><strong>continue</strong>: 今回の処理をスキップして、次のループへ進む。</li>
+        </ul>
+
+        <pre><code># breakの例：5が見つかったら終了
+for i in range(1, 11):
+    if i == 5:
+        print("5を見つけました！終了します。")
+        break
+    print(i)
+
+# continueの例：3の倍数をスキップ
+for i in range(1, 6):
+    if i % 3 == 0:
+        continue  # 下のprintは実行されずに次へ
+    print(i)</code></pre>
+    </section>
+
+    <section>
+        <div class="box box-exercise">
+            <h4><i class="fas fa-pencil-alt"></i> 第2回 演習課題</h4>
+            
+            <div style="margin-bottom: 30px;">
+                <p><strong>課題1：FizzBuzz（フィズバズ）問題</strong></p>
+                <p>1から20までの数字を順番に表示するプログラムを作成してください。<br>
+                ただし、以下の特別ルールを適用してください。</p>
+                <ul>
+                    <li>数字が3の倍数のときは、数字の代わりに <strong>"Fizz"</strong> と表示する。</li>
+                    <li>数字が5の倍数のときは、数字の代わりに <strong>"Buzz"</strong> と表示する。</li>
+                    <li>（応用）両方の倍数（15など）のときは <strong>"FizzBuzz"</strong> と表示する。</li>
+                </ul>
+                <p><strong>ヒント：</strong> <code>i % 3 == 0</code> で割り切れるか判定できます。</p>
+            </div>
+
+            <div>
+                <p><strong>課題2：パスワード認証（応用）</strong></p>
+                <p><code>while</code> 文を使って、正しいパスワード（例: "python123"）が入力されるまで、「パスワードを入力してください」と聞き続けるプログラムを作成してください。<br>
+                正解したら「ログイン成功！」と表示して終了します。</p>
+            </div>
+
+            <details>
+                <summary class="toggle-btn"><i class="fas fa-key"></i> 解答例を表示する</summary>
+                <div style="margin-top: 20px;">
+                    <p><strong>課題1 (FizzBuzz)</strong></p>
+                    <pre><code>for i in range(1, 21):
+    # 先に一番条件が厳しい「15の倍数」をチェックする
+    if i % 15 == 0:
+        print("FizzBuzz")
+    elif i % 3 == 0:
+        print("Fizz")
+    elif i % 5 == 0:
+        print("Buzz")
+    else:
+        print(i)</code></pre>
+                    
+                    <p><strong>課題2 (パスワード)</strong></p>
+                    <pre><code>secret = "python123"
+
+while True:  # 無限ループ
+    user_input = input("パスワードを入力: ")
+    
+    if user_input == secret:
+        print("ログイン成功！")
+        break  # 正解ならループを抜ける
+    else:
+        print("違います。もう一度。")</code></pre>
+                </div>
+            </details>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Python Programming Course for Freshmen.</p>
+    </footer>
+</div>
+
+</body>
+</html>
